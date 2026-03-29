@@ -1,0 +1,7 @@
+cd "/Users/widade/Library/Mobile Documents/com~apple~CloudDocs/Planning App"
+git init
+git add index.html style.css app.js
+git commit -m "Initial commit: The Vault v5"
+git branch -M main
+git remote add origin https://github.com/widade/the-vault.git
+git push -u origin main
