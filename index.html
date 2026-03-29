@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="The Vault">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <title>The Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="safe-area-top" aria-hidden="true"></div>
+
+  <div id="app">
+
+    <!-- ── Header ──────────────────────────────────────────────── -->
+    <header class="app-header">
+      <div class="app-header__brand">
+        <svg width="18" height="18" viewBox="0 0 512 512" fill="none" aria-hidden="true">
+          <circle cx="256" cy="256" r="178" fill="#F2EFE9" stroke="#D8D3CB" stroke-width="16"/>
+          <circle cx="256" cy="256" r="120" fill="#FAF8F5" stroke="#D8D3CB" stroke-width="10"/>
+          <circle cx="256" cy="118" r="18" fill="#9E9892"/>
+          <circle cx="394" cy="256" r="18" fill="#9E9892"/>
+          <circle cx="256" cy="394" r="18" fill="#9E9892"/>
+          <circle cx="118" cy="256" r="18" fill="#9E9892"/>
+          <line x1="256" y1="256" x2="295" y2="218" stroke="#8B7355" stroke-width="18" stroke-linecap="round"/>
+          <circle cx="256" cy="256" r="28" fill="#9E9892"/>
+          <circle cx="256" cy="256" r="12" fill="#FAF8F5"/>
+          <rect x="310" y="244" width="52" height="24" rx="12" fill="#8B7355"/>
+        </svg>
+        <span class="app-header__title">The Vault</span>
+      </div>
+      <div class="app-header__right">
+        <span class="app-header__date" id="header-date"></span>
+      </div>
+    </header>
+
+    <!-- ── View: Home (category cards) ─────────────────────────── -->
+    <div id="view-home" class="view">
+
+      <div class="home-greeting">
+        <h1 class="home-greeting__title" id="home-greeting-title">Good morning ✨</h1>
+        <p class="home-greeting__sub">What's on your mind?</p>
+      </div>
+
+      <!-- Alert: ideas waiting for review -->
+      <div class="home-alert" id="home-alert" hidden>
+        <span class="home-alert__dot" aria-hidden="true"></span>
+        <span id="home-alert-text">ideas waiting for review</span>
+        <button class="home-alert__btn" id="home-alert-btn">Review →</button>
+      </div>
+
+      <!-- 4 Category cards -->
+      <div class="category-cards" id="category-cards" aria-label="Categories"></div>
+
+      <!-- In Motion teaser -->
+      <div class="motion-teaser" id="motion-teaser" hidden>
+        <div class="motion-teaser__inner">
+          <span class="motion-teaser__icon">⚡</span>
+          <div>
+            <p class="motion-teaser__label">In Motion</p>
+            <p class="motion-teaser__count" id="motion-teaser-count">0 active</p>
+          </div>
+          <button class="motion-teaser__btn" id="motion-teaser-btn">View →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── View: Category drill-down ────────────────────────────── -->
+    <div id="view-category" class="view" hidden>
+      <div class="view-topbar">
+        <button class="back-btn" id="cat-back" aria-label="Back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+          </svg>
+        </button>
+        <div class="view-topbar__titles">
+          <span class="view-topbar__emoji" id="cat-emoji"></span>
+          <h2 class="view-topbar__title" id="cat-title"></h2>
+        </div>
+        <span class="view-topbar__count" id="cat-count"></span>
+      </div>
+      <div class="mini-filter-bar" id="cat-filter-bar" role="tablist">
+        <button class="mini-tab mini-tab--active" data-filter="all"      role="tab">All</button>
+        <button class="mini-tab"                  data-filter="inbox"    role="tab">🎙 New</button>
+        <button class="mini-tab"                  data-filter="pursuing" role="tab">⚡ Active</button>
+        <button class="mini-tab"                  data-filter="done"     role="tab">✅ Done</button>
+      </div>
+      <div class="card-grid" id="cat-card-grid"></div>
+    </div>
+
+    <!-- ── View: To-Do list ──────────────────────────────────────── -->
+    <div id="view-todos" class="view" hidden>
+      <div class="todos-topbar">
+        <h2 class="todos-topbar__title">To‑Do</h2>
+        <span class="todos-badge" id="todos-badge" aria-label="Active tasks"></span>
+      </div>
+
+      <div class="todo-add-row">
+        <input type="text" id="todo-input" class="todo-input" placeholder="Add a task…" autocorrect="on" autocomplete="off">
+        <button class="todo-add-btn" id="todo-add-btn" aria-label="Add task">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mini-filter-bar" id="todos-filter-bar" role="tablist">
+        <button class="mini-tab mini-tab--active" data-filter="all"    role="tab">All</button>
+        <button class="mini-tab"                  data-filter="active" role="tab">Active</button>
+        <button class="mini-tab"                  data-filter="done"   role="tab">Done</button>
+      </div>
+
+      <ul class="todo-list" id="todo-list" aria-label="Tasks"></ul>
+    </div>
+
+    <!-- ── View: All Ideas (search) ─────────────────────────────── -->
+    <div id="view-all" class="view" hidden>
+      <div class="all-view__search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="search" id="search-input" placeholder="Search ideas…" autocomplete="off" spellcheck="false" aria-label="Search">
+        <button class="all-view__search-clear hidden" id="search-clear" aria-label="Clear">✕</button>
+      </div>
+      <div class="filter-bar" role="tablist">
+        <button class="filter-tab filter-tab--active" data-filter="all"      role="tab" aria-selected="true">All</button>
+        <button class="filter-tab" data-filter="inbox"    role="tab" aria-selected="false">🎙 New</button>
+        <button class="filter-tab" data-filter="pursuing" role="tab" aria-selected="false">⚡ Active</button>
+        <button class="filter-tab" data-filter="done"     role="tab" aria-selected="false">✅ Done</button>
+        <button class="filter-tab" data-filter="work"     role="tab" aria-selected="false">💼 Work</button>
+        <button class="filter-tab" data-filter="personal" role="tab" aria-selected="false">🏠 Personal</button>
+        <button class="filter-tab" data-filter="creative" role="tab" aria-selected="false">🎨 Creative</button>
+        <button class="filter-tab" data-filter="money"    role="tab" aria-selected="false">💰 Money</button>
+      </div>
+      <div class="card-grid card-grid--full" id="all-list"></div>
+    </div>
+
+    <!-- ── View: In Motion ───────────────────────────────────────── -->
+    <div id="view-motion" class="view" hidden>
+      <div class="view-topbar">
+        <span class="view-topbar__emoji">⚡</span>
+        <h2 class="view-topbar__title">In Motion</h2>
+        <span class="view-topbar__count" id="motion-sub"></span>
+      </div>
+      <div class="card-grid" id="motion-card-grid"></div>
+    </div>
+
+    <!-- ── Bottom Navigation ─────────────────────────────────────── -->
+    <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+      <button class="bottom-nav__item bottom-nav__item--active" id="nav-home" aria-label="Home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Home</span>
+      </button>
+
+      <button class="bottom-nav__item" id="nav-all" aria-label="Search all ideas">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span>Search</span>
+      </button>
+
+      <!-- Centre record button -->
+      <button class="bottom-nav__item bottom-nav__item--record" id="nav-record" aria-label="Record a new idea">
+        <div class="nav-mic-btn" id="nav-mic-btn">
+          <svg class="nav-mic-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 11a7 7 0 0014 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="8" y1="22" x2="16" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg class="nav-stop-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" rx="3"/>
+          </svg>
+        </div>
+      </button>
+
+      <button class="bottom-nav__item" id="nav-todos" aria-label="To-do list">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 11 12 14 22 4"/>
+          <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+        </svg>
+        <span>To‑Do</span>
+      </button>
+
+      <button class="bottom-nav__item" id="nav-motion" aria-label="In Motion">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        <span>Motion</span>
+      </button>
+    </nav>
+
+  </div><!-- #app -->
+
+  <!-- ── Recording Sheet ────────────────────────────────────────── -->
+  <div id="record-sheet" class="sheet" role="dialog" aria-modal="true" aria-label="Recording" aria-hidden="true">
+    <div class="sheet__overlay" id="record-overlay"></div>
+    <div class="sheet__panel record-panel">
+      <div class="sheet__handle" aria-hidden="true"></div>
+
+      <div class="record-body">
+        <!-- Status row -->
+        <div class="record-status-row">
+          <span class="record-dot" id="record-dot" aria-hidden="true"></span>
+          <span class="record-status-label" id="record-status-label">Starting…</span>
+          <span class="record-timer" id="record-timer">0:00</span>
+        </div>
+
+        <!-- Waveform visualiser -->
+        <div class="waveform" id="record-waveform" aria-hidden="true">
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+          <div class="waveform-bar"></div><div class="waveform-bar"></div>
+        </div>
+
+        <!-- Live transcript -->
+        <div class="record-transcript-wrap">
+          <p class="record-transcript-hint" id="record-transcript-hint">Listening…</p>
+          <p class="record-transcript" id="record-transcript">
+            <span id="record-final-text"></span><span class="record-interim" id="record-interim-text"></span>
+          </p>
+        </div>
+
+        <!-- iOS fallback: no speech API — manual title -->
+        <div class="record-ios-fallback hidden" id="record-ios-fallback">
+          <label class="form-label" for="ios-title-input">What was this about?</label>
+          <textarea class="form-textarea" id="ios-title-input" placeholder="Describe your idea briefly…" rows="3" autocorrect="on"></textarea>
+        </div>
+
+        <!-- Done button -->
+        <button class="record-done-btn" id="record-stop">
+          <span class="record-stop-icon" aria-hidden="true"></span>
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Review Sheet ───────────────────────────────────────────── -->
+  <div id="review-sheet" class="sheet" role="dialog" aria-modal="true" aria-label="Review idea" aria-hidden="true">
+    <div class="sheet__overlay" id="review-overlay"></div>
+    <div class="sheet__panel">
+      <div class="sheet__handle" aria-hidden="true"></div>
+      <div class="sheet__header">
+        <h2 class="sheet__title">Quick Review</h2>
+        <button class="sheet__close" id="review-close" aria-label="Close">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="sheet__form">
+
+        <!-- Audio player (shown if idea has audio) -->
+        <div class="review-audio-wrap hidden" id="review-audio-wrap">
+          <div id="review-audio-player"></div>
+        </div>
+
+        <!-- Transcript (editable) -->
+        <div class="form-group">
+          <span class="form-label">What you said <span class="form-optional">(edit to fix)</span></span>
+          <textarea class="form-textarea" id="review-transcript" rows="3" placeholder="Describe your idea…" autocorrect="on"></textarea>
+        </div>
+
+        <!-- Category picker -->
+        <div class="form-group">
+          <span class="form-label">Life area</span>
+          <div class="cat-picker" role="radiogroup">
+            <label class="cat-opt"><input type="radio" name="review-cat" value="work"     class="cat-radio"><span class="cat-pill">💼 Work</span></label>
+            <label class="cat-opt"><input type="radio" name="review-cat" value="personal" class="cat-radio"><span class="cat-pill">🏠 Personal</span></label>
+            <label class="cat-opt"><input type="radio" name="review-cat" value="creative" class="cat-radio"><span class="cat-pill">🎨 Creative</span></label>
+            <label class="cat-opt"><input type="radio" name="review-cat" value="money"    class="cat-radio"><span class="cat-pill">💰 Money</span></label>
+          </div>
+        </div>
+
+        <!-- Excitement -->
+        <div class="form-group">
+          <span class="form-label">How excited are you?</span>
+          <div class="star-row" id="review-stars" role="group" aria-label="Rate excitement"></div>
+          <p class="review-star-hint" id="review-star-hint"></p>
+        </div>
+
+        <!-- Next step -->
+        <div class="form-group">
+          <label class="form-label" for="review-nextstep">First step if you pursued it</label>
+          <input type="text" id="review-nextstep" class="form-input" placeholder="e.g. Research competitors, sketch idea…" autocorrect="on">
+        </div>
+
+        <!-- Decision buttons -->
+        <div class="review-actions">
+          <button class="review-btn review-btn--trash" id="review-trash">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+            </svg>
+            Not for me
+          </button>
+          <button class="review-btn review-btn--keep" id="review-keep">
+            Keep it
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+            </svg>
+          </button>
+          <button class="review-btn review-btn--pursue" id="review-pursue">
+            Pursue it ⚡
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Detail Panel ───────────────────────────────────────────── -->
+  <div id="detail-panel" class="detail-panel" role="dialog" aria-modal="true" aria-label="Idea detail" aria-hidden="true">
+    <div class="detail-header">
+      <button class="detail-back" id="detail-back" aria-label="Back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+      <button class="detail-edit-btn" id="detail-edit-btn">Edit</button>
+    </div>
+    <div class="detail-content">
+      <div id="detail-category"></div>
+
+      <!-- Audio player (shown if idea has audio) -->
+      <div class="detail-audio-wrap hidden" id="detail-audio-wrap">
+        <div id="detail-audio-player"></div>
+      </div>
+
+      <h1 class="detail-title" id="detail-title" contenteditable="false" spellcheck="true"></h1>
+      <div class="detail-meta">
+        <span id="detail-date"></span>
+        <div class="star-row" id="detail-stars" role="group" aria-label="Excitement"></div>
+      </div>
+
+      <div class="detail-field-group" id="detail-status-group">
+        <span class="form-label">Status</span>
+        <div class="status-chips" id="detail-status" role="group">
+          <button class="status-chip" type="button" data-status="inbox"    aria-pressed="false">📥 Inbox</button>
+          <button class="status-chip" type="button" data-status="pursuing" aria-pressed="false">⚡ Pursuing</button>
+          <button class="status-chip" type="button" data-status="done"     aria-pressed="false">✅ Done</button>
+          <button class="status-chip" type="button" data-status="archived" aria-pressed="false">🗄️ Archived</button>
+        </div>
+      </div>
+
+      <div class="detail-field-group">
+        <label class="form-label" for="detail-notes">Notes</label>
+        <textarea class="form-textarea" id="detail-notes" placeholder="No notes…" rows="4" readonly></textarea>
+      </div>
+
+      <div class="detail-field-group">
+        <label class="form-label" for="detail-nextstep">First step</label>
+        <input type="text" class="form-input" id="detail-nextstep" placeholder="Nothing planned yet…" readonly>
+      </div>
+
+      <div class="detail-field-group" id="detail-revenue-group">
+        <div class="revenue-hd">
+          <span class="form-label">Monthly Revenue</span>
+          <span class="revenue-this-month-badge" id="detail-revenue-badge"></span>
+        </div>
+        <div class="revenue-log-list" id="detail-revenue-log"></div>
+        <div class="revenue-add-row">
+          <input type="month" id="revenue-month-input" class="form-input revenue-inp-month">
+          <input type="number" id="revenue-amount-input" class="form-input revenue-inp-amount" placeholder="Amount" min="0" step="1">
+          <button type="button" class="revenue-log-btn" id="revenue-log-btn">Log</button>
+        </div>
+      </div>
+
+      <div style="height: 100px" aria-hidden="true"></div>
+    </div>
+    <div class="detail-footer">
+      <button class="btn btn--ghost-danger" id="detail-delete-btn">Delete</button>
+    </div>
+  </div>
+
+  <!-- ── Confirm Dialog ─────────────────────────────────────────── -->
+  <div id="confirm-dialog" class="confirm-dialog hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="confirm-dialog__backdrop"></div>
+    <div class="confirm-dialog__panel">
+      <h2 class="confirm-dialog__title" id="confirm-title"></h2>
+      <p class="confirm-dialog__body" id="confirm-body"></p>
+      <div class="confirm-dialog__actions">
+        <button class="btn btn--secondary" id="confirm-cancel">Cancel</button>
+        <button class="btn btn--danger"    id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toasts ─────────────────────────────────────────────────── -->
+  <div id="toast-container" class="toast-container" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
